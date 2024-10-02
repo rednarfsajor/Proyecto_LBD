@@ -1,0 +1,32 @@
+FACTURA 20
+
+
+
+Monto: 6000
+
+Productos: 
+FR270,
+
+Metodo de pago: SINPE
+
+
+
+Comprador: 402520190
+
+Nombre: Frander Rojas
+
+Telefono: 71306563
+
+Correo: franderrojas20@gmail.com
+
+
+
+Vendedor: 123456789
+
+Nombre: Adler Rojas
+
+Puesto: null
+
+
+
+Fecha: 26/04/2023

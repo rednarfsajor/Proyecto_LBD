@@ -1,0 +1,32 @@
+FACTURA 19
+
+
+
+Monto: 86000
+
+Productos: 
+FR201,FR270,FR430,
+
+Metodo de pago: Efectivo
+
+
+
+Comprador: 402520190
+
+Nombre: Frander Rojas
+
+Telefono: 71306563
+
+Correo: franderrojas20@gmail.com
+
+
+
+Vendedor: 123456789
+
+Nombre: Adler Rojas
+
+Puesto: null
+
+
+
+Fecha: 26/4/2023

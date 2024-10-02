@@ -1,0 +1,32 @@
+FACTURA 18
+
+
+
+Monto: 230000
+
+Productos: 
+FR201,FR430,
+
+Metodo de pago: Tarjeta
+
+
+
+Comprador: 402520189
+
+Nombre: Alonso G. Montoya
+
+Telefono: 71349685
+
+Correo: Alonso.montoya@gmail.com
+
+
+
+Vendedor: 963852741
+
+Nombre: Daniel Santoya
+
+Puesto: Gerente Senior de Ventas
+
+
+
+Fecha: 26/04/2023
