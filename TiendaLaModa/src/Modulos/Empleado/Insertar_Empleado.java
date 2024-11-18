@@ -5,6 +5,7 @@ package Modulos.Empleado;
 
 import Modulos.*;
 import java.sql.Connection;
+import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 import static java.lang.System.exit;
@@ -138,6 +139,11 @@ public class Insertar_Empleado extends javax.swing.JFrame {
         CREAR.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 CREARMouseClicked(evt);
+            }
+        });
+        CREAR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CREARActionPerformed(evt);
             }
         });
 
@@ -319,17 +325,12 @@ public class Insertar_Empleado extends javax.swing.JFrame {
         if(TXT_CED.getText().length()==9&&!TXT_NOMBRE.getText().isBlank()){
             if(Validar()){
                try{
+                   
                     //Insertar sera la variable de tipo Prepared Statemnte obtenida de la conexin de base de datos con la consulta INSERT INTO
-                   PreparedStatement insertar= General.database.prepareStatement("INSERT INTO empleados(cedula,nombre,tipo,telefono,direccion,correo,puesto,salario) VALUES (?,?,?,?,?,?,?,?)");
-                   //Tomo los datos de cada TXT para insertarlo en la base de datos junto con la sentencia SQL
-                   insertar.setString(1, TXT_CED.getText());
-                   insertar.setString(2, TXT_NOMBRE.getText());
-                   insertar.setString(3, COMBO_TIPO.getSelectedItem().toString());
-                   insertar.setString(4, TXT_TELEFONO.getText());
-                   insertar.setString(5, TXT_DIRECCION.getText());
-                   insertar.setString(6, TXT_CORREO.getText());
-                   insertar.setString(7, TXT_PUESTO.getText());
-                   insertar.setString(8, TXT_SALARIO.getText());
+                    //Tomo los datos de cada TXT para insertarlo en la base de datos junto con la sentencia SQL
+                    CallableStatement insertar= General.database.prepareCall("{call INSERTAR_EMPLEADO(" + Integer.parseInt(TXT_CED.getText()) + ",'" + TXT_NOMBRE.getText() + "','" + COMBO_TIPO.getSelectedItem().toString() +"','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "','" + TXT_PUESTO.getText() +"'," + Integer.parseInt(TXT_SALARIO.getText()) + ",null,null)}");
+                   
+                   
                    //Variable para saber si la ejecución se realiza correctamente
                    int A=insertar.executeUpdate(); //ExecuteUpdate() realiza la sentencia INSERT INTO + datos de TXT en la base de datos y la actualiza y retorna un valor de acuerdo al exito 
                    if (A>0) { //Si fue exitoso
@@ -377,6 +378,10 @@ public class Insertar_Empleado extends javax.swing.JFrame {
     private void EXITMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EXITMouseClicked
         exit(0);
     }//GEN-LAST:event_EXITMouseClicked
+
+    private void CREARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CREARActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CREARActionPerformed
 
     /**
      * @param args the command line arguments
