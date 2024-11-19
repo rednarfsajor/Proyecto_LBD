@@ -12,5 +12,5 @@ import java.sql.Connection;
  */
 public class General {
    public static Conexion db= new Conexion();
-   public static Connection database=db.getConnection();
+   public static Connection database=db.conectar();
 }
