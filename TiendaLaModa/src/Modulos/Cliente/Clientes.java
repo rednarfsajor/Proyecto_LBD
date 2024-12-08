@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.CallableStatement;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel; //Para editar nuestro JTable
@@ -381,7 +382,9 @@ public class Clientes extends javax.swing.JFrame {
         if (opt==JOptionPane.YES_OPTION) {
           try{
             //Preparar consulta de eliminar usuario
-           PreparedStatement eliminar = General.database.prepareStatement("DELETE FROM clientes WHERE cedula='"+ced+"'");
+           CallableStatement eliminar = General.database.prepareCall("{call ELIMINAR_CLIENTE("+ced+")}");
+           
+           
            eliminar.executeUpdate(); //Ejecución de consulta
            JOptionPane.showMessageDialog(null, "Cliente eliminado con exito");
            this.TODOMouseClicked(evt); //Aplica lo que sucede al precionar mostrar todos

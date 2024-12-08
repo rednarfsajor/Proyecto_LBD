@@ -9,6 +9,7 @@ import java.util.ArrayList; //ArrayList
 import javax.swing.JOptionPane;
 import Clases.Cliente;
 import static java.lang.System.exit;
+import java.sql.CallableStatement;
 
 public class Modificar_Cliente extends javax.swing.JFrame {
 
@@ -304,12 +305,20 @@ public class Modificar_Cliente extends javax.swing.JFrame {
         cliente.add(TXT_CORREO.getText());
           try{
               //Se prepara sentencia SQL
-             PreparedStatement modificar = General.database.prepareStatement("UPDATE clientes SET nombre='" + cliente.get(0)+"', telefono='"+ cliente.get(1)+"', direccion='"+ cliente.get(2)+"', correo='"+ cliente.get(3)+"' WHERE cedula='"+ client.getCedula()+"'");
-             //Se ejecuta el SQL
-             modificar.executeUpdate();
-             JOptionPane.showMessageDialog(null, "Cliente modificado con exito");
-            //Se devuelve a la ventana de busqueda
-            modificar.close(); 
+            
+            CallableStatement modificar= General.database.prepareCall("{call ACTUALIZAR_CLIENTE(" + Integer.parseInt(client.getCedula()) + ",'" + TXT_NOMBRE.getText() + "','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "')}");
+                    
+            //Se ejecuta el SQL
+            int A=modificar.executeUpdate(); //ExecuteUpdate() realiza la sentencia INSERT INTO + datos de TXT en la base de datos y la actualiza y retorna un valor de acuerdo al exito 
+                   if (A>0) { //Si fue exitoso
+                       JOptionPane.showMessageDialog(null, "Cliente modificado con exito");
+                       modificar.close();
+                       this.BACKMouseClicked(evt);
+                   }
+                   else{//Si fallo el insertar empleado
+                       JOptionPane.showMessageDialog(null, "Se presentaron fallos al modificar cliente");
+                   } 
+             
             Clientes ventana = new Clientes();
              ventana.setVisible(true);
              this.setVisible(false);

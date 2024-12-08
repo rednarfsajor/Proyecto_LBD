@@ -8,8 +8,10 @@ import Modulos.General;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 import static java.lang.System.exit;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
 
 public class Insertar_Cliente extends javax.swing.JFrame {
 
@@ -302,14 +304,10 @@ public class Insertar_Cliente extends javax.swing.JFrame {
             if(Validar()){
                 try{
                 //Insertar sera la variable de tipo Prepared Statemnte obtenida de la conexin de base de datos con la consulta INSERT INTO
-               PreparedStatement insertar= General.database.prepareStatement("INSERT INTO clientes(cedula,nombre,tipo,telefono,direccion,correo) VALUES (?,?,?,?,?,?)");
-               //Tomo los datos de cada TXT para insertarlo en la base de datos junto con la sentencia SQL
-               insertar.setString(1, TXT_CED.getText());
-               insertar.setString(2, TXT_NOMBRE.getText());
-               insertar.setString(3, COMBO_TIPO.getSelectedItem().toString());
-               insertar.setString(4, TXT_TELEFONO.getText());
-               insertar.setString(5, TXT_DIRECCION.getText());
-               insertar.setString(6, TXT_CORREO.getText());
+               
+               CallableStatement insertar= General.database.prepareCall("{call INSERTAR_CLIENTE(" + Integer.parseInt(TXT_CED.getText()) + ",'" + TXT_NOMBRE.getText() + "','" + COMBO_TIPO.getSelectedItem().toString() +"','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "')}");
+                   
+               
                //Variable para saber si la ejecución se realiza correctamente
                int A=insertar.executeUpdate(); //ExecuteUpdate() realiza la sentencia INSERT INTO + datos de TXT en la base de datos y la actualiza y retorna un valor de acuerdo al exito 
                if (A>0) { //Si fue exitoso

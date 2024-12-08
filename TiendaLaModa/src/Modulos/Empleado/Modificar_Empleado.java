@@ -4,6 +4,7 @@ package Modulos.Empleado;
 //Librerias para conexion y modificar empleado
 
 import Modulos.*;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList; //ArrayList
@@ -339,12 +340,20 @@ public class Modificar_Empleado extends javax.swing.JFrame {
         empleado.add(TXT_SALARIO.getText());
           try{
               //Se prepara sentencia SQL
-             PreparedStatement modificar = General.database.prepareStatement("UPDATE empleados SET nombre='" + empleado.get(0)+"', telefono='"+ empleado.get(1)+"', direccion='"+ empleado.get(2)+"', correo='"+ empleado.get(3)+"', puesto='"+empleado.get(4)+"',salario='"+empleado.get(5)+"' WHERE cedula='"+ employee.getCedula()+"'");
-             //Se ejecuta el SQL
-             modificar.executeUpdate();
-             JOptionPane.showMessageDialog(null, "Empleado modificado con exito");
-            //Se devuelve a la ventana de busqueda
-            modificar.close(); 
+             //PreparedStatement modificar = General.database.prepareStatement("UPDATE empleados SET nombre='" + empleado.get(0)+"', telefono='"+ empleado.get(1)+"', direccion='"+ empleado.get(2)+"', correo='"+ empleado.get(3)+"', puesto='"+empleado.get(4)+"',salario='"+empleado.get(5)+"' WHERE cedula='"+ employee.getCedula()+"'");
+            CallableStatement modificar= General.database.prepareCall("{call ACTUALIZAR_EMPLEADO(" + Integer.parseInt(employee.getCedula()) + ",'" + TXT_NOMBRE.getText() + "','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "','" + TXT_PUESTO.getText() +"'," + Integer.parseInt(TXT_SALARIO.getText()) + ")}");
+                    
+            //Se ejecuta el SQL
+            int A=modificar.executeUpdate(); //ExecuteUpdate() realiza la sentencia INSERT INTO + datos de TXT en la base de datos y la actualiza y retorna un valor de acuerdo al exito 
+                   if (A>0) { //Si fue exitoso
+                       JOptionPane.showMessageDialog(null, "Empleado modificado con exito");
+                       modificar.close();
+                       this.BACKMouseClicked(evt);
+                   }
+                   else{//Si fallo el insertar empleado
+                       JOptionPane.showMessageDialog(null, "Se presentaron fallos al modificar empleado");
+                   }
+             
             Empleados ventana = new Empleados();
              ventana.setVisible(true);
              this.setVisible(false);
