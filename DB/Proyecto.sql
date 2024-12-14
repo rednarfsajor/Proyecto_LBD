@@ -1333,7 +1333,7 @@ END;
 
 Reporte de productos con cantidad mayor a 20:
 BEGIN
-    REPORTE_PRODUCTOS_DINAMICO(
+    TLM.REPORTE_PRODUCTOS_DINAMICO(
         FILTRO_CANTIDAD => 'CANTIDAD > 20'
     );
 END;
@@ -1341,14 +1341,14 @@ END;
 
 Reporte de productos con precio menor a 5000:
 BEGIN
-    REPORTE_PRODUCTOS_DINAMICO(
+    TLM.REPORTE_PRODUCTOS_DINAMICO(
         FILTRO_PRECIO => 'PRECIO < 5000'
     );
 END;
 
 Reporte combinado de productos con cantidad mayor a 10 y precio menor a 20000:
 BEGIN
-    REPORTE_PRODUCTOS_DINAMICO(
+    TLM.REPORTE_PRODUCTOS_DINAMICO(
         FILTRO_CANTIDAD => 'CANTIDAD > 10',
         FILTRO_PRECIO => 'PRECIO < 20000'
     );
@@ -1356,7 +1356,7 @@ END;
 
 Reporte ordenado por precio descendente:
 BEGIN
-    REPORTE_PRODUCTOS_DINAMICO(
+    TLM.REPORTE_PRODUCTOS_DINAMICO(
         ORDEN_COL => 'PRECIO',
         ORDEN_TIPO => 'DESC'
     );
