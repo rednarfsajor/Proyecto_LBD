@@ -1261,7 +1261,7 @@ BEGIN
         CANTIDAD_IN => 20
     );
 
-    -- Calcula el precio total para 15 unidades
+    -- Calcula el precio total para 20 unidades
     DBMS_OUTPUT.PUT_LINE('Precio Total: ' || PKG_INVENTARIO.CALCULAR_PRECIO_TOTAL(7500, 20));
 END;
 
