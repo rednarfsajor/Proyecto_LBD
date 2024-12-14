@@ -9,7 +9,7 @@ import java.util.ArrayList; //ArrayList
 import javax.swing.JOptionPane;
 import Clases.Producto;
 import static java.lang.System.exit;
-
+import java.sql.CallableStatement;
 public class Modificar_Producto extends javax.swing.JFrame {
 
     Producto product;
@@ -284,11 +284,18 @@ public class Modificar_Producto extends javax.swing.JFrame {
         producto.add(TXT_PRECIO.getText());
         try {
             //Se prepara sentencia SQL
-            PreparedStatement modificar = General.database.prepareStatement("UPDATE productos SET nombre='" + producto.get(0) + "', descripcion='" + producto.get(1) + "', cantidad='" + producto.get(2) + "', precio='"+producto.get(3)+"' WHERE codigo='" + product.getCodigo() + "'");
+            CallableStatement modificar= General.database.prepareCall("{call ACTUALIZAR_PRODUCTO(" + Integer.parseInt(product.getCodigo()) + ",'" + TXT_NOMBRE.getText()+ "','" + TXT_DESCRIPCION.getText() + "'," + Integer.parseInt(TXT_CANT.getText()) + "," + Integer.parseInt(TXT_PRECIO.getText()) + ")}");
+                    
             //Se ejecuta el SQL
-            modificar.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Producto modificado con exito");
-            modificar.close();
+            int A=modificar.executeUpdate(); //ExecuteUpdate() realiza la sentencia INSERT INTO + datos de TXT en la base de datos y la actualiza y retorna un valor de acuerdo al exito 
+                   if (A>0) { //Si fue exitoso
+                       JOptionPane.showMessageDialog(null, "Empleado modificado con exito");
+                       modificar.close();
+                       this.BACKMouseClicked(evt);
+                   }
+                   else{//Si fallo el insertar empleado
+                       JOptionPane.showMessageDialog(null, "Se presentaron fallos al modificar empleado");
+                   }
             //Se devuelve a la ventana de busqueda
             Productos ventana = new Productos();
             ventana.setVisible(true);

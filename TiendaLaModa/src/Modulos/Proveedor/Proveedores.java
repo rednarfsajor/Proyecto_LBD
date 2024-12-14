@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
-
+import java.sql.CallableStatement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel; //Para editar nuestro JTable
 import Clases.Proveedor; //Lllamar a la clase Cliente para instanciar un objeti de tipo Cliente
@@ -390,7 +390,9 @@ public class Proveedores extends javax.swing.JFrame {
         if (opt==JOptionPane.YES_OPTION) {
             try{
             //Preparar consulta de eliminar usuario
-           PreparedStatement eliminar = General.database.prepareStatement("DELETE FROM proveedores WHERE cedula='"+ced+"'");
+           
+           CallableStatement eliminar = General.database.prepareCall("{call ELIMINAR_PROVEEDOR("+ced+")}");
+           
            eliminar.executeUpdate(); //Ejecución de consulta
            JOptionPane.showMessageDialog(null, "Proveedor eliminado con exito");
            this.TODOMouseClicked(evt); //Aplica lo que sucede al precionar mostrar todos

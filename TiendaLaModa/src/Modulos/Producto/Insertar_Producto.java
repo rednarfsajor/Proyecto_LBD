@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import static java.lang.System.exit;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.CallableStatement;
 
 public class Insertar_Producto extends javax.swing.JFrame {
 
@@ -284,14 +285,8 @@ public class Insertar_Producto extends javax.swing.JFrame {
             if(Validar()){
                try{
                     //Insertar sera la variable de tipo Prepared Statemnte obtenida de la conexin de base de datos con la consulta INSERT INTO
-                   PreparedStatement insertar= General.database.prepareStatement("INSERT INTO productos(codigo,nombre,descripcion,cantidad,precio) VALUES (?,?,?,?,?)");
-                   //Tomo los datos de cada TXT para insertarlo en la base de datos junto con la sentencia SQL
-                   insertar.setString(1, TXT_COD.getText());
-                   insertar.setString(2, TXT_NOMBRE.getText());
-                   insertar.setString(3, TXT_DESCRIPCION.getText());
-                   insertar.setString(4,  TXT_CANT.getText());
-                   insertar.setString(5, TXT_PRECIO.getText());
-                   //Variable para saber si la ejecución se realiza correctamente
+                   CallableStatement insertar= General.database.prepareCall("{call INSERTAR_PRODUCTO(" + Integer.parseInt(TXT_COD.getText()) + ",'" + TXT_NOMBRE.getText()+ "','" + TXT_DESCRIPCION.getText() + "'," + Integer.parseInt(TXT_CANT.getText()) + "," + Integer.parseInt(TXT_PRECIO.getText()) + ")}");
+                   
                    int A=insertar.executeUpdate(); //ExecuteUpdate() realiza la sentencia INSERT INTO + datos de TXT en la base de datos y la actualiza y retorna un valor de acuerdo al exito 
                    if (A>0) { //Si fue exitoso
                        insertar.close();

@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import static java.lang.System.exit;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.CallableStatement;
 
 public class Insertar_Empleado extends javax.swing.JFrame {
 

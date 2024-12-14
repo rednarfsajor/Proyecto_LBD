@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
-
+import java.sql.CallableStatement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel; //Para editar nuestro JTable
 import Clases.Producto; //Lllamar a la clase Cliente para instanciar un objeti de tipo Cliente
@@ -379,7 +379,8 @@ public class Productos extends javax.swing.JFrame {
         if (opt==JOptionPane.YES_OPTION) {
             try {
             //Preparar consulta de eliminar usuario
-            PreparedStatement eliminar = General.database.prepareStatement("DELETE FROM productos WHERE codigo='" + cod + "'");
+            CallableStatement eliminar = General.database.prepareCall("{call ELIMINAR_PRODUCTO("+cod+")}");
+           
             eliminar.executeUpdate(); //Ejecución de consulta
             JOptionPane.showMessageDialog(null, "Producto eliminado con éxito");
             this.TODOMouseClicked(evt); //Aplica lo que sucede al precionar mostrar todos
