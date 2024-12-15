@@ -23,6 +23,50 @@ CREATE TABLE TLM.CLIENTES(
 
 SELECT * FROM TLM.CLIENTES;
 
+CREATE TABLE AUDIT_CLIENTES(
+        LOG_ID INT CONSTRAINT AUDIT_CLIENTES_PK PRIMARY KEY,
+        CEDULA VARCHAR2(9),
+        NOMBRE VARCHAR2(30),
+        TIPO VARCHAR2(20),
+        TELEFONO VARCHAR2(11),
+        DIRECCION VARCHAR2(100),
+        CORREO VARCHAR2(30),
+        ACCION VARCHAR(20),
+        FECHA_ACCION DATE DEFAULT SYSDATE
+)
+
+CREATE OR REPLACE TRIGGER  TRG_AUDIT_CLIENTES
+BEFORE UPDATE OR DELETE OR INSERT ON CLIENTES
+FOR EACH ROW
+BEGIN
+    IF  UPDATING THEN
+    INSERT  INTO AUDIT_CLIENTES VALUES (null, :NEW.CEDULA, :NEW.NOMBRE, :NEW.TIPO, :NEW.TELEFONO, :NEW.DIRECCION, :NEW.CORREO, 'MODIFICACION', SYSDATE);
+    ELSIF DELETING THEN
+    INSERT  INTO AUDIT_CLIENTES VALUES (null, :OLD.CEDULA, :OLD.NOMBRE, :OLD.TIPO, :OLD.TELEFONO, :OLD.DIRECCION, :OLD.CORREO, 'ELIMINACION', SYSDATE);
+    ELSIF INSERTING THEN
+    INSERT  INTO AUDIT_CLIENTES VALUES (null, :NEW.CEDULA, :NEW.NOMBRE, :NEW.TIPO, :NEW.TELEFONO, :NEW.DIRECCION, :NEW.CORREO, 'CREACION', SYSDATE);
+    END IF;
+EXCEPTION     
+  WHEN OTHERS THEN
+         DBMS_OUTPUT.PUT_LINE('ERROR: '|| SQLCODE || ' ' || SQLERRM);          
+END;
+
+CREATE SEQUENCE SEC_LOG_ID
+  START WITH 1
+  INCREMENT BY 1
+  MAXVALUE 99999999999999999999999
+  MINVALUE 1
+  NOCYCLE;
+  
+CREATE OR REPLACE TRIGGER TRG_LOG_ID_AUDIT_CLIENTES
+BEFORE INSERT ON AUDIT_CLIENTES
+FOR EACH ROW
+BEGIN
+  :new.LOG_ID := SEC_LOG_ID.NEXTVAL;
+END;
+
+
+
 -- TABLA PROVEEDORES
 CREATE TABLE TLM.PROVEEDORES(
         CEDULA VARCHAR2(9) NOT NULL CONSTRAINT PROVEEDORES_PK PRIMARY KEY,
@@ -77,7 +121,7 @@ INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, 
 VALUES ('117880731', 'Proveedor1', 'General', '1234567890', 'Heredia Centro', 'provedor1@ejemplo.com', 10);
 
 INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PRODUCTOS)
-VALUES ('100000001', 'Proveedor1', 'General', '77771111', 'San José', 'proveedor1@mail.com', 10);
+VALUES ('100000001', 'Proveedor1', 'General', '77771111', 'San Josï¿½', 'proveedor1@mail.com', 10);
 
 INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PRODUCTOS)
 VALUES ('100000002', 'Proveedor2', 'Mayorista', '77771112', 'Cartago', 'proveedor2@mail.com', 20);
@@ -89,7 +133,7 @@ INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, 
 VALUES ('100000004', 'Proveedor4', 'General', '77771114', 'Alajuela', 'proveedor4@mail.com', 25);
 
 INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PRODUCTOS)
-VALUES ('100000005', 'Proveedor5', 'Mayorista', '77771115', 'Limón', 'proveedor5@mail.com', 30);
+VALUES ('100000005', 'Proveedor5', 'Mayorista', '77771115', 'Limï¿½n', 'proveedor5@mail.com', 30);
 
 INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PRODUCTOS)
 VALUES ('100000006', 'Proveedor6', 'Distribuidor', '77771116', 'Puntarenas', 'proveedor6@mail.com', 40);
@@ -98,7 +142,7 @@ INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, 
 VALUES ('100000007', 'Proveedor7', 'General', '77771117', 'Guanacaste', 'proveedor7@mail.com', 12);
 
 INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PRODUCTOS)
-VALUES ('100000008', 'Proveedor8', 'Mayorista', '77771118', 'Perez Zeledón', 'proveedor8@mail.com', 50);
+VALUES ('100000008', 'Proveedor8', 'Mayorista', '77771118', 'Perez Zeledï¿½n', 'proveedor8@mail.com', 50);
 
 INSERT INTO TLM.PROVEEDORES (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PRODUCTOS)
 VALUES ('100000009', 'Proveedor9', 'Distribuidor', '77771119', 'Ciudad Quesada', 'proveedor9@mail.com', 22);
@@ -108,34 +152,34 @@ VALUES ('100000010', 'Proveedor10', 'General', '77771110', 'San Carlos', 'provee
 
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('111111111', 'Juan', 'Pérez', 'López', 'Regular', '88885555', 'San José', 'juan.perez@mail.com');
+VALUES ('111111111', 'Juan', 'Pï¿½rez', 'Lï¿½pez', 'Regular', '88885555', 'San Josï¿½', 'juan.perez@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('222222222', 'Ana', 'Gómez', 'Martínez', 'VIP', '88885556', 'Cartago', 'ana.gomez@mail.com');
+VALUES ('222222222', 'Ana', 'Gï¿½mez', 'Martï¿½nez', 'VIP', '88885556', 'Cartago', 'ana.gomez@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('333333333', 'Carlos', 'Rodríguez', 'Morales', 'Regular', '88885557', 'Heredia', 'carlos.rodriguez@mail.com');
+VALUES ('333333333', 'Carlos', 'Rodrï¿½guez', 'Morales', 'Regular', '88885557', 'Heredia', 'carlos.rodriguez@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('444444444', 'Lucía', 'Ramírez', 'Castro', 'VIP', '88885558', 'Alajuela', 'lucia.ramirez@mail.com');
+VALUES ('444444444', 'Lucï¿½a', 'Ramï¿½rez', 'Castro', 'VIP', '88885558', 'Alajuela', 'lucia.ramirez@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('555555555', 'Pedro', 'Villalobos', 'Jiménez', 'Regular', '88885559', 'Puntarenas', 'pedro.villalobos@mail.com');
+VALUES ('555555555', 'Pedro', 'Villalobos', 'Jimï¿½nez', 'Regular', '88885559', 'Puntarenas', 'pedro.villalobos@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('666666666', 'María', 'Fernández', 'Vargas', 'VIP', '88885560', 'Guanacaste', 'maria.fernandez@mail.com');
+VALUES ('666666666', 'Marï¿½a', 'Fernï¿½ndez', 'Vargas', 'VIP', '88885560', 'Guanacaste', 'maria.fernandez@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('777777777', 'Luis', 'Cordero', 'Mora', 'Regular', '88885561', 'Limón', 'luis.cordero@mail.com');
+VALUES ('777777777', 'Luis', 'Cordero', 'Mora', 'Regular', '88885561', 'Limï¿½n', 'luis.cordero@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('888888888', 'Elena', 'Solano', 'Quesada', 'VIP', '88885562', 'Perez Zeledón', 'elena.solano@mail.com');
+VALUES ('888888888', 'Elena', 'Solano', 'Quesada', 'VIP', '88885562', 'Perez Zeledï¿½n', 'elena.solano@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('999999999', 'Jorge', 'Rojas', 'Chacón', 'Regular', '88885563', 'Ciudad Quesada', 'jorge.rojas@mail.com');
+VALUES ('999999999', 'Jorge', 'Rojas', 'Chacï¿½n', 'Regular', '88885563', 'Ciudad Quesada', 'jorge.rojas@mail.com');
 
 INSERT INTO TLM.CLIENTES (CEDULA, NOMBRE, PRIMER_APELLIDO, SEGUNDO_APELLIDO, TIPO, TELEFONO, DIRECCION, CORREO)
-VALUES ('000000001', 'Karla', 'Arias', 'Muñoz', 'VIP', '88885564', 'San Carlos', 'karla.arias@mail.com');
+VALUES ('000000001', 'Karla', 'Arias', 'Muï¿½oz', 'VIP', '88885564', 'San Carlos', 'karla.arias@mail.com');
 
 
 INSERT INTO TLM.VENTAS (MONTO, PRODUCTOS, PAGO, COMPRADOR, VENDEDOR, FECHA, CANTIDADES)
@@ -160,7 +204,7 @@ INSERT INTO TLM.VENTAS (MONTO, PRODUCTOS, PAGO, COMPRADOR, VENDEDOR, FECHA, CANT
 VALUES (25000, 'Perfume', 'Transferencia', '666666666', '100000006', SYSDATE, 2);
 
 INSERT INTO TLM.VENTAS (MONTO, PRODUCTOS, PAGO, COMPRADOR, VENDEDOR, FECHA, CANTIDADES)
-VALUES (15000, 'Cinturón', 'Efectivo', '777777777', '100000007', SYSDATE, 3);
+VALUES (15000, 'Cinturï¿½n', 'Efectivo', '777777777', '100000007', SYSDATE, 3);
 
 INSERT INTO TLM.VENTAS (MONTO, PRODUCTOS, PAGO, COMPRADOR, VENDEDOR, FECHA, CANTIDADES)
 VALUES (10000, 'Anillo', 'Tarjeta', '888888888', '100000008', SYSDATE, 2);
@@ -173,28 +217,28 @@ VALUES (20000, 'Reloj', 'Transferencia', '000000001', '100000010', SYSDATE, 4);
 
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (123456789, 'María González', 'Tiempo completo', '9876543210', 'Avenida Central, San José', 'mgonzalez@empresa.com', 'Gerente', 1500000, 'maria.gonzalez', 'password123');
+VALUES (123456789, 'Marï¿½a Gonzï¿½lez', 'Tiempo completo', '9876543210', 'Avenida Central, San Josï¿½', 'mgonzalez@empresa.com', 'Gerente', 1500000, 'maria.gonzalez', 'password123');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (101, 'María González', 'Tiempo Completo', '88884444', 'San José', 'maria.gonzalez@mail.com', 'Gerente', 1500000, 'maria.g', 'password123');
+VALUES (101, 'Marï¿½a Gonzï¿½lez', 'Tiempo Completo', '88884444', 'San Josï¿½', 'maria.gonzalez@mail.com', 'Gerente', 1500000, 'maria.g', 'password123');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (102, 'Luis Pérez', 'Medio Tiempo', '88884445', 'Cartago', 'luis.perez@mail.com', 'Asistente', 800000, 'luis.p', 'password123');
+VALUES (102, 'Luis Pï¿½rez', 'Medio Tiempo', '88884445', 'Cartago', 'luis.perez@mail.com', 'Asistente', 800000, 'luis.p', 'password123');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (103, 'Ana Ramírez', 'Tiempo Completo', '88884446', 'Heredia', 'ana.ramirez@mail.com', 'Supervisor', 1200000, 'ana.r', 'password456');
+VALUES (103, 'Ana Ramï¿½rez', 'Tiempo Completo', '88884446', 'Heredia', 'ana.ramirez@mail.com', 'Supervisor', 1200000, 'ana.r', 'password456');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (104, 'Carlos Rodríguez', 'Tiempo Completo', '88884447', 'Alajuela', 'carlos.rodriguez@mail.com', 'Administrador', 1300000, 'carlos.r', 'password789');
+VALUES (104, 'Carlos Rodrï¿½guez', 'Tiempo Completo', '88884447', 'Alajuela', 'carlos.rodriguez@mail.com', 'Administrador', 1300000, 'carlos.r', 'password789');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (105, 'Lucía Villalobos', 'Medio Tiempo', '88884448', 'Puntarenas', 'lucia.villalobos@mail.com', 'Recepcionista', 600000, 'lucia.v', 'password321');
+VALUES (105, 'Lucï¿½a Villalobos', 'Medio Tiempo', '88884448', 'Puntarenas', 'lucia.villalobos@mail.com', 'Recepcionista', 600000, 'lucia.v', 'password321');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (106, 'Pedro Ramírez', 'Tiempo Completo', '88884449', 'Guanacaste', 'pedro.ramirez@mail.com', 'Jefe de Ventas', 1400000, 'pedro.r', 'password987');
+VALUES (106, 'Pedro Ramï¿½rez', 'Tiempo Completo', '88884449', 'Guanacaste', 'pedro.ramirez@mail.com', 'Jefe de Ventas', 1400000, 'pedro.r', 'password987');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (107, 'Karla Solano', 'Tiempo Completo', '88884450', 'Perez Zeledón', 'karla.solano@mail.com', 'Contadora', 1350000, 'karla.s', 'password654');
+VALUES (107, 'Karla Solano', 'Tiempo Completo', '88884450', 'Perez Zeledï¿½n', 'karla.solano@mail.com', 'Contadora', 1350000, 'karla.s', 'password654');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
 VALUES (108, 'Elena Quesada', 'Medio Tiempo', '88884451', 'Ciudad Quesada', 'elena.quesada@mail.com', 'Analista', 850000, 'elena.q', 'password321');
@@ -203,14 +247,14 @@ INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PU
 VALUES (109, 'Jorge Arias', 'Tiempo Completo', '88884452', 'San Carlos', 'jorge.arias@mail.com', 'Ingeniero', 1500000, 'jorge.a', 'password111');
 
 INSERT INTO TLM.EMPLEADOS (CEDULA, NOMBRE, TIPO, TELEFONO, DIRECCION, CORREO, PUESTO, SALARIO, USERNAME, PASSWORD)
-VALUES (110, 'Sofía Chacón', 'Medio Tiempo', '88884453', 'Heredia', 'sofia.chacon@mail.com', 'Diseñadora', 700000, 'sofia.c', 'password222');
+VALUES (110, 'Sofï¿½a Chacï¿½n', 'Medio Tiempo', '88884453', 'Heredia', 'sofia.chacon@mail.com', 'Diseï¿½adora', 700000, 'sofia.c', 'password222');
 
 
 INSERT INTO TLM.PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO)
 VALUES (101, 'Jeans', 'Color gris', 50, 7500);
 
 INSERT INTO TLM.PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO)
-VALUES (102, 'Camiseta', 'Camiseta blanca 100% algodón', 100, 5000);
+VALUES (102, 'Camiseta', 'Camiseta blanca 100% algodï¿½n', 100, 5000);
 
 INSERT INTO TLM.PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO)
 VALUES (103, 'Zapatos', 'Zapatos deportivos de alta calidad', 30, 25000);
@@ -222,13 +266,13 @@ INSERT INTO TLM.PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO)
 VALUES (105, 'Bolso', 'Bolso de cuero negro', 20, 45000);
 
 INSERT INTO TLM.PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO)
-VALUES (106, 'Cinturón', 'Cinturón de cuero ajustable', 50, 12000);
+VALUES (106, 'Cinturï¿½n', 'Cinturï¿½n de cuero ajustable', 50, 12000);
 
 INSERT INTO TLM.PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO)
-VALUES (107, 'Perfume', 'Perfume de larga duración', 40, 30000);
+VALUES (107, 'Perfume', 'Perfume de larga duraciï¿½n', 40, 30000);
 
 INSERT INTO TLM.PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO)
-VALUES (108, 'Anillo', 'Anillo de plata con diseño único', 10, 20000);
+VALUES (108, 'Anillo', 'Anillo de plata con diseï¿½o ï¿½nico', 10, 20000);
 
 INSERT INTO TLM.PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO)
 VALUES (109, 'Reloj', 'Reloj de pulsera digital resistente al agua', 15, 35000);
@@ -263,7 +307,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Proveedor creado correctamente: ' || CEDULA_IN);
 EXCEPTION
     WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El proveedor con cédula ' || CEDULA_IN || ' ya existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El proveedor con cï¿½dula ' || CEDULA_IN || ' ya existe.');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Error al crear proveedor: ' || SQLERRM);
 END;
@@ -275,7 +319,7 @@ BEGIN
         NOMBRE_IN => 'Proveedor A',
         TIPO_IN => 'Mayorista',
         TELEFONO_IN => '88885555',
-        DIRECCION_IN => 'San José, Costa Rica',
+        DIRECCION_IN => 'San Josï¿½, Costa Rica',
         CORREO_IN => 'proveedor_a@mail.com',
         PRODUCTOS_IN => 50
     );
@@ -301,11 +345,11 @@ BEGIN
         EXIT WHEN CURSOR_PROVEEDORES%NOTFOUND;
 
         DBMS_OUTPUT.PUT_LINE(
-            'Cédula: ' || PROVEEDOR_ROW.CEDULA ||
+            'Cï¿½dula: ' || PROVEEDOR_ROW.CEDULA ||
             ', Nombre: ' || PROVEEDOR_ROW.NOMBRE ||
             ', Tipo: ' || PROVEEDOR_ROW.TIPO ||
-            ', Teléfono: ' || PROVEEDOR_ROW.TELEFONO ||
-            ', Dirección: ' || PROVEEDOR_ROW.DIRECCION ||
+            ', Telï¿½fono: ' || PROVEEDOR_ROW.TELEFONO ||
+            ', Direcciï¿½n: ' || PROVEEDOR_ROW.DIRECCION ||
             ', Productos: ' || PROVEEDOR_ROW.PRODUCTOS
         );
     END LOOP;
@@ -347,7 +391,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Proveedor actualizado correctamente: ' || CEDULA_IN);
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El proveedor con cédula ' || CEDULA_IN || ' no existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El proveedor con cï¿½dula ' || CEDULA_IN || ' no existe.');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Error al actualizar proveedor: ' || SQLERRM);
 END;
@@ -379,7 +423,7 @@ BEGIN
     WHERE CEDULA = CEDULA_IN;
 
     IF V_COUNT = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El proveedor con cédula ' || CEDULA_IN || ' no existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El proveedor con cï¿½dula ' || CEDULA_IN || ' no existe.');
     ELSE
         -- Eliminar el registro
         DELETE FROM TLM.PROVEEDORES
@@ -424,7 +468,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Empleado creado correctamente: ' || CEDULA_IN);
 EXCEPTION
     WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El empleado con cédula ' || CEDULA_IN || ' ya existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El empleado con cï¿½dula ' || CEDULA_IN || ' ya existe.');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Error al crear empleado: ' || SQLERRM);
 END;
@@ -432,10 +476,10 @@ END;
 BEGIN
     CREAR_EMPLEADO(
         CEDULA_IN => 123456789,
-        NOMBRE_IN => 'Juan Pérez',
+        NOMBRE_IN => 'Juan Pï¿½rez',
         TIPO_IN => 'Tiempo Completo',
         TELEFONO_IN => '88885555',
-        DIRECCION_IN => 'San José, Costa Rica',
+        DIRECCION_IN => 'San Josï¿½, Costa Rica',
         CORREO_IN => 'juan.perez@mail.com',
         PUESTO_IN => 'Gerente',
         SALARIO_IN => 2000,
@@ -465,10 +509,10 @@ BEGIN
         EXIT WHEN CURSOR_EMPLEADOS%NOTFOUND;
 
         DBMS_OUTPUT.PUT_LINE(
-            'Cédula: ' || EMPLEADO_ROW.CEDULA ||
+            'Cï¿½dula: ' || EMPLEADO_ROW.CEDULA ||
             ', Nombre: ' || EMPLEADO_ROW.NOMBRE ||
             ', Tipo: ' || EMPLEADO_ROW.TIPO ||
-            ', Teléfono: ' || EMPLEADO_ROW.TELEFONO ||
+            ', Telï¿½fono: ' || EMPLEADO_ROW.TELEFONO ||
             ', Puesto: ' || EMPLEADO_ROW.PUESTO ||
             ', Salario: ' || EMPLEADO_ROW.SALARIO
         );
@@ -514,7 +558,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Empleado actualizado correctamente: ' || CEDULA_IN);
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El empleado con cédula ' || CEDULA_IN || ' no existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El empleado con cï¿½dula ' || CEDULA_IN || ' no existe.');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Error al actualizar empleado: ' || SQLERRM);
 END;
@@ -523,7 +567,7 @@ END;
 BEGIN
     ACTUALIZAR_EMPLEADO(
         CEDULA_IN => 123456789,
-        NOMBRE_IN => 'Juan Pérez Actualizado',
+        NOMBRE_IN => 'Juan Pï¿½rez Actualizado',
         TIPO_IN => 'Medio Tiempo',
         TELEFONO_IN => '99998888',
         DIRECCION_IN => 'Heredia, Costa Rica',
@@ -548,7 +592,7 @@ BEGIN
     WHERE CEDULA = CEDULA_IN;
 
     IF V_COUNT = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El empleado con cédula ' || CEDULA_IN || ' no existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El empleado con cï¿½dula ' || CEDULA_IN || ' no existe.');
     ELSE
         -- Eliminar el registro
         DELETE FROM TLM.EMPLEADOS
@@ -587,7 +631,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Producto creado correctamente: ' || NOMBRE_IN);
 EXCEPTION
     WHEN DUP_VAL_ON_INDEX THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El producto con código ' || CODIGO_IN || ' ya existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El producto con cï¿½digo ' || CODIGO_IN || ' ya existe.');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Error al crear producto: ' || SQLERRM);
 END;
@@ -596,7 +640,7 @@ BEGIN
     CREAR_PRODUCTO(
         CODIGO_IN => 101,
         NOMBRE_IN => 'Camiseta',
-        DESCRIPCION_IN => 'Camiseta de algodón 100% color blanco.',
+        DESCRIPCION_IN => 'Camiseta de algodï¿½n 100% color blanco.',
         CANTIDAD_IN => 50,
         PRECIO_IN => 2000
     );
@@ -624,9 +668,9 @@ BEGIN
         EXIT WHEN CURSOR_PRODUCTOS%NOTFOUND;
 
         DBMS_OUTPUT.PUT_LINE(
-            'Código: ' || PRODUCTO_ROW.CODIGO ||
+            'Cï¿½digo: ' || PRODUCTO_ROW.CODIGO ||
             ', Nombre: ' || PRODUCTO_ROW.NOMBRE ||
-            ', Descripción: ' || PRODUCTO_ROW.DESCRIPCION ||
+            ', Descripciï¿½n: ' || PRODUCTO_ROW.DESCRIPCION ||
             ', Cantidad: ' || PRODUCTO_ROW.CANTIDAD ||
             ', Precio: ' || PRODUCTO_ROW.PRECIO
         );
@@ -663,7 +707,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Producto actualizado correctamente: ' || NOMBRE_IN);
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El producto con código ' || CODIGO_IN || ' no existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El producto con cï¿½digo ' || CODIGO_IN || ' no existe.');
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Error al actualizar producto: ' || SQLERRM);
 END;
@@ -672,8 +716,8 @@ END;
 BEGIN
     ACTUALIZAR_PRODUCTO(
         CODIGO_IN => 101,
-        NOMBRE_IN => 'Camiseta de Algodón',
-        DESCRIPCION_IN => 'Camiseta de algodón premium color azul.',
+        NOMBRE_IN => 'Camiseta de Algodï¿½n',
+        DESCRIPCION_IN => 'Camiseta de algodï¿½n premium color azul.',
         CANTIDAD_IN => 60,
         PRECIO_IN => 2500
     );
@@ -692,13 +736,13 @@ BEGIN
     WHERE CODIGO = CODIGO_IN;
 
     IF V_COUNT = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Error: El producto con código ' || CODIGO_IN || ' no existe.');
+        DBMS_OUTPUT.PUT_LINE('Error: El producto con cï¿½digo ' || CODIGO_IN || ' no existe.');
     ELSE
         -- Eliminar el registro
         DELETE FROM TLM.PRODUCTOS
         WHERE CODIGO = CODIGO_IN;
 
-        DBMS_OUTPUT.PUT_LINE('Producto eliminado correctamente: Código ' || CODIGO_IN);
+        DBMS_OUTPUT.PUT_LINE('Producto eliminado correctamente: Cï¿½digo ' || CODIGO_IN);
     END IF;
 
 EXCEPTION
@@ -800,7 +844,7 @@ BEGIN
 END;
 
 BEGIN
-    LEER_VENTAS(CRITERIO_IN => '117880731'); -- Lee ventas para un comprador específico
+    LEER_VENTAS(CRITERIO_IN => '117880731'); -- Lee ventas para un comprador especï¿½fico
 END;
 
 BEGIN
@@ -940,7 +984,7 @@ BEGIN
     REGISTRAR_CLIENTE(
         CEDULA_IN => '555666222',
         NOMBRE_IN => 'Carlos',
-        APELLIDO_IN => 'Ramírez',
+        APELLIDO_IN => 'Ramï¿½rez',
         TELEFONO_IN => '88885555',
         CORREO_IN => 'carlos.ramirez@mail.com'
     );
@@ -980,7 +1024,7 @@ DECLARE
     CURSOR_PRODUCTOS SYS_REFCURSOR;
     PRODUCTO PRODUCTOS%ROWTYPE;
 BEGIN
-    CURSOR_PRODUCTOS := PRODUCTOS_AGOTANDOSE(10); -- Límite: 10 unidades
+    CURSOR_PRODUCTOS := PRODUCTOS_AGOTANDOSE(10); -- Lï¿½mite: 10 unidades
     LOOP
         FETCH CURSOR_PRODUCTOS INTO PRODUCTO;
         EXIT WHEN CURSOR_PRODUCTOS%NOTFOUND;
@@ -1260,7 +1304,7 @@ SELECT PKG_INVENTARIO.CALCULAR_PRECIO_TOTAL(7500, 5) AS PRECIO_TOTAL FROM DUAL;
 
 
 BEGIN
-    -- Agrega más unidades al inventario
+    -- Agrega mï¿½s unidades al inventario
     PKG_INVENTARIO.ACTUALIZAR_INVENTARIO(
         CODIGO_IN => 101, 
         CANTIDAD_IN => 20
@@ -1286,10 +1330,10 @@ CREATE OR REPLACE PROCEDURE REPORTE_PRODUCTOS_DINAMICO(
     CURSOR_RESULT SYS_REFCURSOR;
     PRODUCTO_ROW PRODUCTOS%ROWTYPE;
 BEGIN
-    -- Construcción inicial de la consulta
+    -- Construcciï¿½n inicial de la consulta
     QUERY := 'SELECT * FROM PRODUCTOS WHERE 1=1';
 
-    -- Agregar filtros dinámicos
+    -- Agregar filtros dinï¿½micos
     IF FILTRO_CANTIDAD IS NOT NULL THEN
         QUERY := QUERY || ' AND ' || FILTRO_CANTIDAD;
     END IF;
@@ -1298,7 +1342,7 @@ BEGIN
         QUERY := QUERY || ' AND ' || FILTRO_PRECIO;
     END IF;
 
-    -- Agregar orden dinámico
+    -- Agregar orden dinï¿½mico
     IF ORDEN_COL IS NOT NULL THEN
         QUERY := QUERY || ' ORDER BY ' || ORDEN_COL;
 
@@ -1308,7 +1352,7 @@ BEGIN
         END IF;
     END IF;
 
-    -- Abre el cursor dinámico
+    -- Abre el cursor dinï¿½mico
     OPEN CURSOR_RESULT FOR QUERY;
 
     -- Muestra cada fila del resultado
@@ -1327,7 +1371,7 @@ BEGIN
     CLOSE CURSOR_RESULT;
 
     -- Mensaje adicional
-    DBMS_OUTPUT.PUT_LINE('Consulta dinámica ejecutada: ' || QUERY);
+    DBMS_OUTPUT.PUT_LINE('Consulta dinï¿½mica ejecutada: ' || QUERY);
 END;
 
 
