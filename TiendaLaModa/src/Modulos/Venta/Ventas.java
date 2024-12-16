@@ -9,10 +9,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
-
+import java.sql.Types;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel; //Para editar nuestro JTable
 import Clases.Venta; //Lllamar a la clase Cliente para instanciar un objeti de tipo Cliente
+import java.sql.CallableStatement;
 import java.io.*;
 public class Ventas extends javax.swing.JFrame {
 
@@ -289,7 +290,7 @@ public class Ventas extends javax.swing.JFrame {
 
     private void TODOMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TODOMouseClicked
         ID=null; //Cedula null al mostrar todos los ventas
-        SQL="SELECT * FROM ventas"; //Consulta
+        
         
         String []datos=new String[8]; //Vector/lista para insertarlas en el JTable
         try{
@@ -304,20 +305,20 @@ public class Ventas extends javax.swing.JFrame {
             modelo.addColumn("Vendedor");
             modelo.addColumn("Fecha");
             
-            //Statement obtenido de la conexion
-            Statement state=General.database.createStatement();
-            //ResultSet almacena los datos generados de la consulta para extraer los datos
-            ResultSet result=state.executeQuery(SQL); //Ejecución de consulta
-            //Almacenar cada venta en el vector
-            while(result.next()){ //Se repite hasta que no haya ventas
-                datos[0]=result.getString(1);
-                datos[1]=result.getString(2);
-                datos[2]=result.getString(3);
-                datos[3]=result.getString(8);
-                datos[4]=result.getString(4);
-                datos[5]=result.getString(5);
-                datos[6]=result.getString(6);
-                datos[7]=result.getString(7);
+            CallableStatement ver = General.database.prepareCall("{call VER_VENTAS(?)}");
+            ver.registerOutParameter(1, Types.REF_CURSOR);
+            ver.execute();
+            ResultSet rs=(ResultSet)ver.getObject(1);
+            
+            while(rs.next()){ //Se repite hasta que no haya ventas
+                datos[0]=rs.getString(1);
+                datos[1]=rs.getString(2);
+                datos[2]=rs.getString(3);
+                datos[3]=rs.getString(8);
+                datos[4]=rs.getString(4);
+                datos[5]=rs.getString(5);
+                datos[6]=rs.getString(6);
+                datos[7]=rs.getString(7);
                 modelo.addRow(datos); //Añadimos fila al modelo del Jtable
             }
             //Al finalizar bucle insertar el modelo en el Jtable
@@ -328,8 +329,8 @@ public class Ventas extends javax.swing.JFrame {
             ELIMINAR.setVisible(false);
             IMPRIMIR.setVisible(false);
             //Cierro lo utilizado
-            result.close();
-            state.close();
+            rs.close();
+            ver.close();
             
         }
         catch(Exception ex){
@@ -339,7 +340,7 @@ public class Ventas extends javax.swing.JFrame {
 
     private void BUSCARMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BUSCARMouseClicked
         ID= TXT_ID.getText();
-        SQL="SELECT * FROM ventas WHERE(ID='" + ID+"')"; //Consulta de un único venta delimitado con WHERE
+        
         
         String []datos=new String[8]; //Vector de datos
         try{
@@ -354,20 +355,22 @@ public class Ventas extends javax.swing.JFrame {
             modelo.addColumn("Vendedor");
             modelo.addColumn("Fecha");
             
-            //Realizar consulta y almacenar resultado
-            Statement state=General.database.createStatement();
-            ResultSet result=state.executeQuery(SQL);
-            while(result.next()){ 
-                datos[0]=result.getString(1);
-                datos[1]=result.getString(2);
-                datos[2]=result.getString(3);
-                datos[3]=result.getString(8);
-                datos[4]=result.getString(4);
-                datos[5]=result.getString(5);
-                datos[6]=result.getString(6);
-                datos[7]=result.getString(7);
+            CallableStatement buscar = General.database.prepareCall("{call BUSCAR_VENTA(?,?)}");
+            buscar.setInt(1, Integer.parseInt(ID));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
+            while(rs.next()){ 
+                datos[0]=rs.getString(1);
+                datos[1]=rs.getString(2);
+                datos[2]=rs.getString(3);
+                datos[3]=rs.getString(8);
+                datos[4]=rs.getString(4);
+                datos[5]=rs.getString(5);
+                datos[6]=rs.getString(6);
+                datos[7]=rs.getString(7);
                 //Creo objeto de clase Cliente con los datos obtenidos
-                sell= new Venta(result.getString(1), result.getString(2), result.getString(3),result.getString(4),result.getString(5),result.getString(6),result.getString(7),result.getString(8));
+                sell= new Venta(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8));
                 modelo.addRow(datos); //Inserto fila al modelo
             }
             //Actualizo modelo de JTable
@@ -379,8 +382,8 @@ public class Ventas extends javax.swing.JFrame {
             IMPRIMIR.setVisible(true);
             
             //Cierro lo utilizado
-            result.close();
-            state.close();
+            rs.close();
+            buscar.close();
             
         }
         catch(Exception ex){
@@ -408,13 +411,13 @@ public class Ventas extends javax.swing.JFrame {
         if (opt==JOptionPane.YES_OPTION) {
             try{
             //Preparar consulta de eliminar usuario
-           PreparedStatement eliminar = General.database.prepareStatement("DELETE FROM ventas WHERE ID='"+ID+"'");
+           CallableStatement eliminar = General.database.prepareCall("{call ELIMINAR_PRODUCTO("+ID+")}");
            eliminar.executeUpdate(); //Ejecución de consulta
            JOptionPane.showMessageDialog(null, "Venta eliminada con exito");
            this.TODOMouseClicked(evt); //Aplica lo que sucede al precionar mostrar todos
        }
        catch(Exception EX){
-           System.out.println("ERROR AL ELIMINAR"+EX);
+           System.out.println("ERROR AL ELIMINAR "+EX);
        }
         }
         
@@ -426,7 +429,8 @@ public class Ventas extends javax.swing.JFrame {
     }//GEN-LAST:event_ELIMINARActionPerformed
 
     private void INSERTARMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_INSERTARMouseClicked
-        Insertar_Venta ventana = new Insertar_Venta();
+       Insertar_Venta ventana = new Insertar_Venta();
+       
        ventana.setVisible(true);
        ventana.setLocationRelativeTo(null);
        this.setVisible(false);
@@ -436,12 +440,14 @@ public class Ventas extends javax.swing.JFrame {
         try{
            ID=VENTAS.getValueAt(VENTAS.getSelectedRow(), 0).toString();
            
+           CallableStatement buscar = General.database.prepareCall("{call BUSCAR_VENTA(?,?)}");
+           buscar.setInt(1, Integer.parseInt(ID));
+           buscar.registerOutParameter(2, Types.REF_CURSOR);
+           buscar.execute();
+           ResultSet rs=(ResultSet)buscar.getObject(2);
            
-           SQL="SELECT * FROM ventas WHERE(ID='" + ID+"')";
-           Statement state=General.database.createStatement();
-           ResultSet result=state.executeQuery(SQL);
-           result.next();
-           sell= new Venta(result.getString(1), result.getString(2), result.getString(3),result.getString(4),result.getString(5),result.getString(6),result.getString(7),result.getString(8));
+           rs.next();
+           sell= new Venta(rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8));
            MODIFICAR.setVisible(true);
            ELIMINAR.setVisible(true);
            IMPRIMIR.setVisible(true);
@@ -463,39 +469,46 @@ public class Ventas extends javax.swing.JFrame {
             FileWriter F= new FileWriter(ruta,false);
             BufferedWriter B= new BufferedWriter(F);
             PrintWriter P= new PrintWriter(B);
-            SQL="SELECT * FROM ventas WHERE(ID='" + ID+"')"; //Consulta de un único venta delimitado con WHERE
-            Statement state=General.database.createStatement();
-            ResultSet result=state.executeQuery(SQL);
-            result.next();
+            CallableStatement buscar = General.database.prepareCall("{call BUSCAR_VENTA(?,?)}");
+            buscar.setInt(1, Integer.parseInt(ID));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
+            rs.next();
             B.write(contenido);
             B.newLine();B.newLine();
-            B.write("\nMonto: "+result.getString(2)); B.newLine();
-            B.write("\nProductos: \n"+result.getString(3)); B.newLine();
-            B.write("\nMetodo de pago: "+result.getString(4)); B.newLine(); B.newLine();
-            B.write("\n\nComprador: "+result.getString(5)); B.newLine();
-            String vendedor=result.getString(6); 
-            String fecha=result.getString(7); 
-            SQL="SELECT nombre,telefono,correo FROM clientes WHERE(cedula='"+result.getString(5)+"')";
-            result.close();
-            state.close();
-            state=General.database.createStatement();
-            result=state.executeQuery(SQL);
-            result.next();
-            B.write("\nNombre: "+result.getString(1));B.newLine();
-            B.write("\nTelefono: "+result.getString(2));B.newLine();
-            B.write("\nCorreo: "+result.getString(3));B.newLine();B.newLine();
-            result.close();
-            state.close();
-            B.write("\n\nVendedor: "+vendedor);B.newLine();
+            B.write("\nMonto: "+rs.getString(2)); B.newLine();
+            B.write("\nProductos: \n"+rs.getString(3)); B.newLine();
+            B.write("\nMetodo de pago: "+rs.getString(4)); B.newLine(); B.newLine();
+            B.write("\n\nComprador: "+rs.getString(5)); B.newLine();
+            String vendedor=rs.getString(6); 
+            String fecha=rs.getString(7); 
+            CallableStatement buscar2 = General.database.prepareCall("{call BUSCAR_CLIENTE(?,?)}");
+            buscar2.setInt(1, Integer.parseInt(rs.getString(5)));
+            buscar2.registerOutParameter(2, Types.REF_CURSOR);
+            buscar2.execute();
+            ResultSet rs2=(ResultSet)buscar2.getObject(2);
+            rs.close();
+            buscar.close();
             
-            SQL="SELECT nombre,puesto FROM empleados WHERE(cedula='"+vendedor+"')";
-            state=General.database.createStatement();
-            result=state.executeQuery(SQL);
-            result.next();
-            B.write("\nNombre: "+result.getString(1));B.newLine();
-            B.write("\nPuesto: "+result.getString(2));B.newLine();B.newLine();
-            result.close();
-            state.close();
+            
+            rs2.next();
+            B.write("\nNombre: "+rs2.getString(1));B.newLine();
+            B.write("\nTelefono: "+rs2.getString(2));B.newLine();
+            B.write("\nCorreo: "+rs2.getString(3));B.newLine();B.newLine();
+            rs2.close();
+            buscar2.close();
+            B.write("\n\nVendedor: "+vendedor);B.newLine();
+            CallableStatement buscar3 = General.database.prepareCall("{call BUSCAR_EMPLEADO(?,?)}");
+            buscar3.setInt(1, Integer.parseInt(vendedor));
+            buscar3.registerOutParameter(2, Types.REF_CURSOR);
+            buscar3.execute();
+            ResultSet rs3=(ResultSet)buscar3.getObject(2);
+            rs3.next();
+            B.write("\nNombre: "+rs3.getString(1));B.newLine();
+            B.write("\nPuesto: "+rs3.getString(2));B.newLine();B.newLine();
+            rs3.close();
+            buscar3.close();
             
             B.write("\n\nFecha: "+fecha);
             B.close();

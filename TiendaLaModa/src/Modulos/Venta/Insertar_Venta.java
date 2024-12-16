@@ -10,7 +10,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
 import static java.lang.System.exit;
-
+import java.sql.CallableStatement;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 public class Insertar_Venta extends javax.swing.JFrame {
 
     /**
@@ -22,6 +24,10 @@ public class Insertar_Venta extends javax.swing.JFrame {
         //Conexion db= new Conexion();
         //database=db.getConnection();
         productos();
+        Date hoy = new Date();
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = formato.format(hoy);
+        TXT_FECHA.setText(fecha);
     }
 
     //Atributos de conexion utilizados al iniciar el JFrame
@@ -182,7 +188,6 @@ public class Insertar_Venta extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setPreferredSize(new java.awt.Dimension(800, 600));
         setSize(new java.awt.Dimension(800, 600));
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
@@ -217,6 +222,8 @@ public class Insertar_Venta extends javax.swing.JFrame {
                 TXT_COMPRADORKeyTyped(evt);
             }
         });
+
+        TXT_FECHA.setEnabled(false);
 
         TXT_VENDEDOR.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -463,7 +470,7 @@ public class Insertar_Venta extends javax.swing.JFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(TXT_PUESTO, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(CREAR, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 134, Short.MAX_VALUE))
+                        .addGap(0, 126, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(BACK)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -576,27 +583,21 @@ public class Insertar_Venta extends javax.swing.JFrame {
            if (Validar()) {
               try{
                 //Insertar sera la variable de tipo Prepared Statemnte obtenida de la conexin de base de datos con la consulta INSERT INTO
-               PreparedStatement insertar= General.database.prepareStatement("INSERT INTO ventas(monto,productos,pago,comprador,vendedor,fecha,cantidades) VALUES (?,?,?,?,?,?,?)");
-               //Tomo los datos de cada TXT para insertarlo en la base de datos junto con la sentencia SQL
-               insertar.setString(1, TXT_MONTO.getText());
                String productos="";
                String[] lista = PRODUCTOS.getSelectedItems();
                for (String i:lista) {
                     productos+=i+",";
                     
                }
-               insertar.setString(2, productos);
-               insertar.setString(3, COMBO_PAGO.getSelectedItem().toString());
-               insertar.setString(4, TXT_COMPRADOR.getText());
-               insertar.setString(5, TXT_VENDEDOR.getText());
-               insertar.setString(6, TXT_FECHA.getText());
-               productos="";
+               String productos2;
+               productos2="";
                   for (int i:Cantidades) {
-                      productos+=String.valueOf(i)+",";
+                      productos2+=String.valueOf(i)+",";
                   }
-               insertar.setString(7, productos); 
-               //Variable para saber si la ejecución se realiza correctamente
-               int A=insertar.executeUpdate(); //ExecuteUpdate() realiza la sentencia INSERT INTO + datos de TXT en la base de datos y la actualiza y retorna un valor de acuerdo al exito 
+                CallableStatement insertar= General.database.prepareCall("{call INSERTAR_VENTA(" + Integer.parseInt(TXT_MONTO.getText()) + ",'" + productos + "','" + COMBO_PAGO.getSelectedItem().toString() +"'," + Integer.parseInt(TXT_COMPRADOR.getText()) + "," + Integer.parseInt(TXT_VENDEDOR.getText()) + ",'"+ productos2 + "')}");
+                   
+               
+               int A=insertar.executeUpdate();  
                if (A>0) { //Si fue exitoso
                    insertar.close();
                    int i=0;
@@ -638,7 +639,8 @@ public class Insertar_Venta extends javax.swing.JFrame {
         }
         TXT_COMPRADOR.setText("");
         TXT_VENDEDOR.setText("");
-        TXT_FECHA.setText("");
+        Date hoy = new Date();
+        TXT_FECHA.setText(hoy.toString());
         COMBO_PAGO.setSelectedIndex(0);
         Productos=null;
         Precios=null;
@@ -766,6 +768,7 @@ public class Insertar_Venta extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Insertar_Venta().setVisible(true);
+                
             }
         });
     }

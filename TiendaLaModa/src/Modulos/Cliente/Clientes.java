@@ -318,8 +318,7 @@ public class Clientes extends javax.swing.JFrame {
 
     private void BUSCARMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BUSCARMouseClicked
         ced= TXT_CED.getText();
-        SQL="SELECT * FROM clientes WHERE(cedula='" + ced+"')"; //Consulta de un único cliente delimitado con WHERE
-        
+               
         String []datos=new String[6]; //Vector de datos
         try{
             //Jtable
@@ -331,18 +330,20 @@ public class Clientes extends javax.swing.JFrame {
             modelo.addColumn("Dirección");
             modelo.addColumn("Correo");
             
-            //Realizar consulta y almacenar resultado
-            Statement state=General.database.createStatement();
-            ResultSet result=state.executeQuery(SQL);
-            while(result.next()){ 
-                datos[0]=result.getString(1);
-                datos[1]=result.getString(2);
-                datos[2]=result.getString(3);
-                datos[3]=result.getString(4);
-                datos[4]=result.getString(5);
-                datos[5]=result.getString(6);
+            CallableStatement buscar = General.database.prepareCall("{call BUSCAR_CLIENTE(?,?)}");
+            buscar.setInt(1, Integer.parseInt(ced));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
+            while(rs.next()){ 
+                datos[0]=rs.getString(1);
+                datos[1]=rs.getString(2);
+                datos[2]=rs.getString(3);
+                datos[3]=rs.getString(4);
+                datos[4]=rs.getString(5);
+                datos[5]=rs.getString(6);
                 //Creo objeto de clase Cliente con los datos obtenidos
-                client= new Cliente(result.getString(3), result.getString(1), result.getString(2),result.getString(4),result.getString(5),result.getString(6));
+                client= new Cliente(rs.getString(3), rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6));
                 modelo.addRow(datos); //Inserto fila al modelo
             }
             //Actualizo modelo de JTable
@@ -353,8 +354,8 @@ public class Clientes extends javax.swing.JFrame {
             ELIMINAR.setVisible(true);
             
             //Cierro lo utilizado
-            result.close();
-            state.close();
+            rs.close();
+            buscar.close();
             
         }
         catch(Exception ex){
@@ -412,12 +413,14 @@ public class Clientes extends javax.swing.JFrame {
            try{
            ced=CLIENTES.getValueAt(CLIENTES.getSelectedRow(), 0).toString();
            
+           CallableStatement buscar = General.database.prepareCall("{call BUSCAR_CLIENTE(?,?)}");
+           buscar.setInt(1, Integer.parseInt(ced));
+           buscar.registerOutParameter(2, Types.REF_CURSOR);
+           buscar.execute();
+           ResultSet rs=(ResultSet)buscar.getObject(2);
            
-           SQL="SELECT * FROM clientes WHERE(cedula='" + ced+"')";
-           Statement state=General.database.createStatement();
-           ResultSet result=state.executeQuery(SQL);
-           result.next();
-           client= new Cliente(result.getString(3), result.getString(1), result.getString(2),result.getString(4),result.getString(5),result.getString(6));
+           rs.next();
+           client= new Cliente(rs.getString(3), rs.getString(1), rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6));
            MODIFICAR.setVisible(true);
            ELIMINAR.setVisible(true);
             }

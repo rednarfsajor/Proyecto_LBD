@@ -12,7 +12,7 @@ import java.sql.CallableStatement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel; //Para editar nuestro JTable
 import Clases.Proveedor; //Lllamar a la clase Cliente para instanciar un objeti de tipo Cliente
-
+import java.sql.Types;
 public class Proveedores extends javax.swing.JFrame {
 
     /**
@@ -277,7 +277,7 @@ public class Proveedores extends javax.swing.JFrame {
 
     private void TODOMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TODOMouseClicked
         ced=null; //Cedula null al mostrar todos los clientes
-        SQL="SELECT * FROM proveedores"; //Consulta
+        
         
         String []datos=new String[7]; //Vector/lista para insertarlas en el JTable
         try{
@@ -291,19 +291,18 @@ public class Proveedores extends javax.swing.JFrame {
             modelo.addColumn("Correo");
             modelo.addColumn("Productos");
             
-            //Statement obtenido de la conexion
-            Statement state=General.database.createStatement();
-            //ResultSet almacena los datos generados de la consulta para extraer los datos
-            ResultSet result=state.executeQuery(SQL); //Ejecución de consulta
-            //Almacenar cada cliente en el vector
-            while(result.next()){ //Se repite hasta que no haya clientes
-                datos[0]=result.getString(1);
-                datos[1]=result.getString(2);
-                datos[2]=result.getString(3);
-                datos[3]=result.getString(4);
-                datos[4]=result.getString(5);
-                datos[5]=result.getString(6);
-                datos[6]=result.getString(7);
+            CallableStatement ver = General.database.prepareCall("{call VER_PROVEEDORES(?)}");
+            ver.registerOutParameter(1, Types.REF_CURSOR);
+            ver.execute();
+            ResultSet rs=(ResultSet)ver.getObject(1);
+            while(rs.next()){ //Se repite hasta que no haya clientes
+                datos[0]=rs.getString(1);
+                datos[1]=rs.getString(2);
+                datos[2]=rs.getString(3);
+                datos[3]=rs.getString(4);
+                datos[4]=rs.getString(5);
+                datos[5]=rs.getString(6);
+                datos[6]=rs.getString(7);
                 modelo.addRow(datos); //Añadimos fila al modelo del Jtable
             }
             //Al finalizar bucle insertar el modelo en el Jtable
@@ -313,8 +312,8 @@ public class Proveedores extends javax.swing.JFrame {
             MODIFICAR.setVisible(false);
             ELIMINAR.setVisible(false);
             //Cierro lo utilizado
-            result.close();
-            state.close();
+            rs.close();
+            ver.close();
             
         }
         catch(Exception ex){
@@ -324,7 +323,6 @@ public class Proveedores extends javax.swing.JFrame {
 
     private void BUSCARMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BUSCARMouseClicked
         ced= TXT_CED.getText();
-        SQL="SELECT * FROM proveedores WHERE(cedula='" + ced+"')"; //Consulta de un único cliente delimitado con WHERE
         
         String []datos=new String[7]; //Vector de datos
         try{
@@ -338,19 +336,21 @@ public class Proveedores extends javax.swing.JFrame {
             modelo.addColumn("Correo");
             modelo.addColumn("Productos");
             
-            //Realizar consulta y almacenar resultado
-            Statement state=General.database.createStatement();
-            ResultSet result=state.executeQuery(SQL);
-            while(result.next()){ 
-                datos[0]=result.getString(1);
-                datos[1]=result.getString(2);
-                datos[2]=result.getString(3);
-                datos[3]=result.getString(4);
-                datos[4]=result.getString(5);
-                datos[5]=result.getString(6);
-                datos[6]=result.getString(7);
+            CallableStatement buscar = General.database.prepareCall("{call BUSCAR_PROVEEDOR(?,?)}");
+            buscar.setInt(1, Integer.parseInt(ced));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
+            while(rs.next()){ 
+                datos[0]=rs.getString(1);
+                datos[1]=rs.getString(2);
+                datos[2]=rs.getString(3);
+                datos[3]=rs.getString(4);
+                datos[4]=rs.getString(5);
+                datos[5]=rs.getString(6);
+                datos[6]=rs.getString(7);
                 //Creo objeto de clase Cliente con los datos obtenidos
-                vendor= new Proveedor(result.getString(3), result.getString(1), result.getString(2),result.getString(4),result.getString(5),result.getString(6),result.getString(7)); //null de credenciales para acceder al sistema
+                vendor= new Proveedor(rs.getString(3), rs.getString(1), rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7)); //null de credenciales para acceder al sistema
                 modelo.addRow(datos); //Inserto fila al modelo
             }
             //Actualizo modelo de JTable
@@ -361,8 +361,8 @@ public class Proveedores extends javax.swing.JFrame {
             ELIMINAR.setVisible(true);
             
             //Cierro lo utilizado
-            result.close();
-            state.close();
+            rs.close();
+            buscar.close();
             
         }
         catch(Exception ex){
@@ -420,7 +420,11 @@ public class Proveedores extends javax.swing.JFrame {
         try{
            ced=PROVEEDORES.getValueAt(PROVEEDORES.getSelectedRow(), 0).toString();
            
-           
+           CallableStatement buscar = General.database.prepareCall("{call BUSCAR_PROVEEDOR(?,?)}");
+            buscar.setInt(1, Integer.parseInt(ced));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
            SQL="SELECT * FROM proveedores WHERE(cedula='" + ced+"')";
            Statement state=General.database.createStatement();
            ResultSet result=state.executeQuery(SQL);

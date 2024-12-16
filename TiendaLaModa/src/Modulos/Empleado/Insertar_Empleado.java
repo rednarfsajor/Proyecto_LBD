@@ -329,7 +329,7 @@ public class Insertar_Empleado extends javax.swing.JFrame {
                    
                     //Insertar sera la variable de tipo Prepared Statemnte obtenida de la conexin de base de datos con la consulta INSERT INTO
                     //Tomo los datos de cada TXT para insertarlo en la base de datos junto con la sentencia SQL
-                    CallableStatement insertar= General.database.prepareCall("{call INSERTAR_EMPLEADO(" + Integer.parseInt(TXT_CED.getText()) + ",'" + TXT_NOMBRE.getText() + "','" + COMBO_TIPO.getSelectedItem().toString() +"','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "','" + TXT_PUESTO.getText() +"'," + Integer.parseInt(TXT_SALARIO.getText()) + ",null,null)}");
+                    CallableStatement insertar= General.database.prepareCall("{call INSERTAR_EMPLEADO(" + Integer.parseInt(TXT_CED.getText()) + ",'" + TXT_NOMBRE.getText() + "','" + COMBO_TIPO.getSelectedItem().toString() +"','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "','" + TXT_PUESTO.getText() +"'," + Integer.parseInt(TXT_SALARIO.getText()) + ")}");
                    
                    
                    //Variable para saber si la ejecución se realiza correctamente
