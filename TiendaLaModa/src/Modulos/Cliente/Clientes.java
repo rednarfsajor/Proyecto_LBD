@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.CallableStatement;
-
+import java.sql.Types;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel; //Para editar nuestro JTable
 import Clases.Cliente; //Lllamar a la clase Cliente para instanciar un objeti de tipo Cliente
@@ -274,8 +274,6 @@ public class Clientes extends javax.swing.JFrame {
 
     private void TODOMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TODOMouseClicked
         ced=null; //Cedula null al mostrar todos los clientes
-        SQL="SELECT * FROM clientes"; //Consulta
-        
         String []datos=new String[6]; //Vector/lista para insertarlas en el JTable
         try{
             //Creación del modelo del JTable
@@ -287,18 +285,19 @@ public class Clientes extends javax.swing.JFrame {
             modelo.addColumn("Dirección");
             modelo.addColumn("Correo");
             
-            //Statement obtenido de la conexion
-            Statement state=General.database.createStatement();
-            //ResultSet almacena los datos generados de la consulta para extraer los datos
-            ResultSet result=state.executeQuery(SQL); //Ejecución de consulta
-            //Almacenar cada cliente en el vector
-            while(result.next()){ //Se repite hasta que no haya clientes
-                datos[0]=result.getString(1);
-                datos[1]=result.getString(2);
-                datos[2]=result.getString(3);
-                datos[3]=result.getString(4);
-                datos[4]=result.getString(5);
-                datos[5]=result.getString(6);
+            
+            CallableStatement ver = General.database.prepareCall("{call VER_CLIENTES(?)}");
+            ver.registerOutParameter(1, Types.REF_CURSOR);
+            ver.execute();
+            ResultSet rs=(ResultSet)ver.getObject(1);
+            
+            while(rs.next()){ //Se repite hasta que no haya clientes
+                datos[0]=rs.getString(1);
+                datos[1]=rs.getString(2);
+                datos[2]=rs.getString(3);
+                datos[3]=rs.getString(4);
+                datos[4]=rs.getString(5);
+                datos[5]=rs.getString(6);
                 modelo.addRow(datos); //Añadimos fila al modelo del Jtable
             }
             //Al finalizar bucle insertar el modelo en el Jtable
@@ -308,8 +307,8 @@ public class Clientes extends javax.swing.JFrame {
             MODIFICAR.setVisible(false);
             ELIMINAR.setVisible(false);
             //Cierro lo utilizado
-            result.close();
-            state.close();
+            rs.close();
+            ver.close();
             
         }
         catch(Exception ex){
