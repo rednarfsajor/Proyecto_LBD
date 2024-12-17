@@ -63,7 +63,7 @@ public class Clientes extends javax.swing.JFrame {
         EXIT = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(800, 600));
+        setUndecorated(true);
         setSize(new java.awt.Dimension(800, 600));
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));

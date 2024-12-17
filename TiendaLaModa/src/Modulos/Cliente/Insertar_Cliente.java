@@ -81,6 +81,7 @@ public class Insertar_Cliente extends javax.swing.JFrame {
         EXIT = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
         setSize(new java.awt.Dimension(800, 600));
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));

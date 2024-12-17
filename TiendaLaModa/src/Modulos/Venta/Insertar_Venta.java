@@ -204,6 +204,7 @@ public class Insertar_Venta extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
+        setUndecorated(true);
         setSize(new java.awt.Dimension(800, 600));
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
@@ -732,7 +733,7 @@ public class Insertar_Venta extends javax.swing.JFrame {
     }//GEN-LAST:event_CANTIDADESMouseClicked
 
     private void BACKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BACKMouseClicked
-        Main_Menu ventana = new Main_Menu();
+        Ventas ventana = new Ventas();
         ventana.setLocationRelativeTo(null);
         ventana.setVisible(true);
         this.setVisible(false);

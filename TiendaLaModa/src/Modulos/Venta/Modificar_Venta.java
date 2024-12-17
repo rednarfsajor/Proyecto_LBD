@@ -181,6 +181,7 @@ public class Modificar_Venta extends javax.swing.JFrame {
         EXIT = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setUndecorated(true);
         setSize(new java.awt.Dimension(1124, 749));
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
@@ -505,7 +506,7 @@ public class Modificar_Venta extends javax.swing.JFrame {
     }//GEN-LAST:event_CANTIDADESMouseClicked
 
     private void BACKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BACKMouseClicked
-        Main_Menu ventana = new Main_Menu();
+        Ventas ventana = new Ventas();
         ventana.setLocationRelativeTo(null);
         ventana.setVisible(true);
         this.setVisible(false);

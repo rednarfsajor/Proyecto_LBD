@@ -64,7 +64,7 @@ public class Empleados extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(800, 600));
+        setUndecorated(true);
         setResizable(false);
         setSize(new java.awt.Dimension(800, 600));
 

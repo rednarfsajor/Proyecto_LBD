@@ -83,6 +83,7 @@ public class Insertar_Empleado extends javax.swing.JFrame {
         EXIT = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
         setSize(new java.awt.Dimension(1124, 749));
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
@@ -374,7 +375,7 @@ public class Insertar_Empleado extends javax.swing.JFrame {
     }//GEN-LAST:event_LIMPIARMouseClicked
 
     private void BACKMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BACKMouseClicked
-        Main_Menu ventana = new Main_Menu();
+        Empleados ventana = new Empleados();
         ventana.setLocationRelativeTo(null);
         ventana.setVisible(true);
         this.setVisible(false);
