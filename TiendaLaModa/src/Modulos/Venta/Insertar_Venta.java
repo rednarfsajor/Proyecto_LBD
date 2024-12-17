@@ -11,6 +11,7 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import static java.lang.System.exit;
 import java.sql.CallableStatement;
+import java.sql.Types;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 public class Insertar_Venta extends javax.swing.JFrame {
@@ -39,14 +40,20 @@ public class Insertar_Venta extends javax.swing.JFrame {
             try{
             Statement state=General.database.createStatement();
             
-            ResultSet result=state.executeQuery("SELECT codigo FROM productos"); //Ejecución de consulta
-            while(result.next()){
-                PRODUCTOS.add(result.getString(1));
+            CallableStatement buscar = General.database.prepareCall("{call OBTENER_PRODUCTOS(?)}");
+            
+            buscar.registerOutParameter(1, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(1);
+            
+            //ResultSet result=state.executeQuery("SELECT codigo FROM productos"); //Ejecución de consulta
+            while(rs.next()){
+                PRODUCTOS.add(rs.getString(1));
             }
-            result.close();
+            rs.close();
             }
             catch(Exception EX){
-                
+                JOptionPane.showMessageDialog(null,EX);
             }
     }
     int Inventario[];
@@ -58,9 +65,14 @@ public class Insertar_Venta extends javax.swing.JFrame {
             try{
                 Statement state=General.database.createStatement();
             
-                ResultSet result=state.executeQuery("SELECT cantidad FROM productos WHERE(codigo='"+item+"')");
-                result.next();
-                int cant=Integer.parseInt(result.getString(1));
+                //ResultSet result=state.executeQuery("SELECT cantidad FROM productos WHERE(codigo='"+item+"')");
+                CallableStatement buscar = General.database.prepareCall("{call OBTENER_CANTIDADES_PRODUCTOS(?,?)}");
+                buscar.setInt(1, Integer.parseInt(item));
+                buscar.registerOutParameter(2, Types.REF_CURSOR);
+                buscar.execute();
+                ResultSet rs=(ResultSet)buscar.getObject(2);
+                rs.next();
+                int cant=rs.getInt(1);
                 Inventario[i]=cant;
                 if(cant>=Cantidades[i]){
                     val=true;
@@ -106,19 +118,21 @@ public class Insertar_Venta extends javax.swing.JFrame {
     
     private void getComprador(){
         try{
-        String SQL = "SELECT nombre,telefono,correo FROM clientes WHERE (cedula='"+TXT_COMPRADOR.getText()+"')";
-        Statement state=General.database.createStatement();
-        ResultSet result=state.executeQuery(SQL);
-        result.next();
-            if (result.getString(1).isBlank()) {
+        CallableStatement buscar = General.database.prepareCall("{call BUSCAR_CLIENTE(?,?)}");
+            buscar.setInt(1, Integer.parseInt(TXT_COMPRADOR.getText()));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
+        rs.next();
+            if (rs.getString(2).isBlank()) {
                 TXT_NOMBRE_COMPRADOR.setText("");
                 TXT_TELEFONO.setText("");
                 TXT_CORREO.setText("");
             }
             else{
-                TXT_NOMBRE_COMPRADOR.setText(result.getString(1));
-                TXT_TELEFONO.setText(result.getString(2));
-                TXT_CORREO.setText(result.getString(3));
+                TXT_NOMBRE_COMPRADOR.setText(rs.getString(2));
+                TXT_TELEFONO.setText(rs.getString(3));
+                TXT_CORREO.setText(rs.getString(4));
             }
         
         }
@@ -131,17 +145,19 @@ public class Insertar_Venta extends javax.swing.JFrame {
     
     private void getVendedor(){
         try{
-        String SQL = "SELECT nombre,puesto FROM empleados WHERE (cedula='"+TXT_VENDEDOR.getText()+"')";
-        Statement state=General.database.createStatement();
-        ResultSet result=state.executeQuery(SQL);
-        result.next();
-            if (result.getString(1).isBlank()) {
+        CallableStatement buscar = General.database.prepareCall("{call BUSCAR_EMPLEADO(?,?)}");
+            buscar.setInt(1, Integer.parseInt(TXT_VENDEDOR.getText()));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
+        rs.next();
+            if (rs.getString(2).isBlank()) {
                 TXT_NOMBRE_VENDEDOR.setText("");
                 TXT_PUESTO.setText("");
             }
             else{
-                TXT_NOMBRE_VENDEDOR.setText(result.getString(1));
-                TXT_PUESTO.setText(result.getString(2));
+                TXT_NOMBRE_VENDEDOR.setText(rs.getString(2));
+                TXT_PUESTO.setText(rs.getString(3));
             }
         
         }

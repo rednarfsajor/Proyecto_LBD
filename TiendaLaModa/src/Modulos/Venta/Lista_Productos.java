@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel; //Para editar nuestro JTable
 import Clases.Venta; //Lllamar a la clase Cliente para instanciar un objeti de tipo Cliente
 import java.io.*;
+import java.sql.CallableStatement;
+import java.sql.Types;
 public class Lista_Productos extends javax.swing.JFrame {
 
     /**
@@ -39,7 +41,7 @@ public class Lista_Productos extends javax.swing.JFrame {
     
     //Objeto venta creado al consultar una cedula/venta en especifico, es para transmitirlo al JFrame que modifica, en caso de que vaya a modificar un venta
     private void getProductos(){
-        SQL = "SELECT * FROM productos"; //Consulta
+        
 
         String[] datos = new String[5]; //Vector/lista para insertarlas en el JTable
         try {
@@ -51,17 +53,17 @@ public class Lista_Productos extends javax.swing.JFrame {
             modelo.addColumn("Cantidad Inventario");
             modelo.addColumn("Precio");
 
-            //Statement obtenido de la conexion
-            Statement state = General.database.createStatement();
-            //ResultSet almacena los datos generados de la consulta para extraer los datos
-            ResultSet result = state.executeQuery(SQL); //Ejecución de consulta
-            //Almacenar cada cliente en el vector
-            while (result.next()) { //Se repite hasta que no haya clientes
-                datos[0] = result.getString(1);
-                datos[1] = result.getString(2);
-                datos[2] = result.getString(3);
-                datos[3] = result.getString(4);
-                datos[4] = result.getString(5);
+            CallableStatement ver = General.database.prepareCall("{call VER_PRODUCTOS(?)}");
+            ver.registerOutParameter(1, Types.REF_CURSOR);
+            ver.execute();
+            ResultSet rs=(ResultSet)ver.getObject(1);
+            
+            while (rs.next()) { //Se repite hasta que no haya clientes
+                datos[0] = rs.getString(1);
+                datos[1] = rs.getString(2);
+                datos[2] = rs.getString(3);
+                datos[3] = rs.getString(4);
+                datos[4] = rs.getString(5);
                 modelo.addRow(datos); //Añadimos fila al modelo del Jtable
             }
             //Al finalizar bucle insertar el modelo en el Jtable
@@ -69,8 +71,8 @@ public class Lista_Productos extends javax.swing.JFrame {
 
             
             //Cierro lo utilizado
-            result.close();
-            state.close();
+            rs.close();
+            ver.close();
             
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error al actualizar tabla", "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -201,8 +203,7 @@ public class Lista_Productos extends javax.swing.JFrame {
 
     private void BUSCARMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BUSCARMouseClicked
         String cod = TXT_COD.getText();
-        SQL = "SELECT * FROM productos WHERE(codigo='" + cod + "')"; //Consulta de un único cliente delimitado con WHERE
-
+        
         String[] datos = new String[5]; //Vector de datos
         try {
             //Jtable
@@ -213,15 +214,17 @@ public class Lista_Productos extends javax.swing.JFrame {
             modelo.addColumn("Cantidad Inventario");
             modelo.addColumn("Precio");
 
-            //Realizar consulta y almacenar resultado
-            Statement state = General.database.createStatement();
-            ResultSet result = state.executeQuery(SQL);
-            while (result.next()) {
-                datos[0] = result.getString(1);
-                datos[1] = result.getString(2);
-                datos[2] = result.getString(3);
-                datos[3] = result.getString(4);
-                datos[4] = result.getString(5);
+            CallableStatement buscar = General.database.prepareCall("{call BUSCAR_PRODUCTO(?,?)}");
+            buscar.setInt(1, Integer.parseInt(cod));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
+            while (rs.next()) {
+                datos[0] = rs.getString(1);
+                datos[1] = rs.getString(2);
+                datos[2] = rs.getString(3);
+                datos[3] = rs.getString(4);
+                datos[4] = rs.getString(5);
                 //Creo objeto de clase Cliente con los datos obtenidos
                 
                 modelo.addRow(datos); //Inserto fila al modelo
@@ -233,8 +236,8 @@ public class Lista_Productos extends javax.swing.JFrame {
            
 
             //Cierro lo utilizado
-            result.close();
-            state.close();
+            rs.close();
+            buscar.close();
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error al actualizar tabla", "ERROR", JOptionPane.WARNING_MESSAGE);

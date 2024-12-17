@@ -411,7 +411,7 @@ public class Ventas extends javax.swing.JFrame {
         if (opt==JOptionPane.YES_OPTION) {
             try{
             //Preparar consulta de eliminar usuario
-           CallableStatement eliminar = General.database.prepareCall("{call ELIMINAR_PRODUCTO("+ID+")}");
+           CallableStatement eliminar = General.database.prepareCall("{call ELIMINAR_VENTA("+ID+")}");
            eliminar.executeUpdate(); //Ejecución de consulta
            JOptionPane.showMessageDialog(null, "Venta eliminada con exito");
            this.TODOMouseClicked(evt); //Aplica lo que sucede al precionar mostrar todos

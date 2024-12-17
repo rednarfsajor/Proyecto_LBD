@@ -12,6 +12,7 @@ import static java.lang.System.exit;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.CallableStatement;
+import java.sql.Types;
 
 public class Insertar_Empleado extends javax.swing.JFrame {
 
@@ -27,11 +28,14 @@ public class Insertar_Empleado extends javax.swing.JFrame {
 
      private boolean Validar(){
         try{
-        String SQL = "SELECT cedula FROM empleados WHERE (cedula='"+TXT_CED.getText()+"')";
-        Statement state=General.database.createStatement();
-        ResultSet result=state.executeQuery(SQL);
-        result.next();
-            if (result.getString(1).isBlank()) {
+            CallableStatement buscar = General.database.prepareCall("{call BUSCAR_EMPLEADO(?,?)}");
+            buscar.setInt(1, Integer.parseInt(TXT_CED.getText()));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
+            
+            rs.next();
+            if (rs.getString(1).isBlank()) {
                 return true;
             }
             else{

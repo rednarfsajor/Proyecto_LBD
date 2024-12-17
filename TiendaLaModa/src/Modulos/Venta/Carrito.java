@@ -9,11 +9,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
-
+import java.sql.CallableStatement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel; //Para editar nuestro JTable
 import Clases.Venta; //Lllamar a la clase Cliente para instanciar un objeti de tipo Cliente
 import java.io.*;
+import java.sql.Types;
 public class Carrito extends javax.swing.JFrame {
 
     /**
@@ -74,14 +75,18 @@ public class Carrito extends javax.swing.JFrame {
             for (String item:productos) {
             //Realizar consulta y almacenar resultado
            try{
-               Statement state = General.database.createStatement();
-                ResultSet result = state.executeQuery("SELECT codigo,nombre,precio FROM productos WHERE(codigo='"+item+"')");
+               
+            CallableStatement buscar = General.database.prepareCall("{call OBTENER_DATOS_PRODUCTOS(?,?)}");
+            buscar.setInt(1, Integer.parseInt(item));
+            buscar.registerOutParameter(2, Types.REF_CURSOR);
+            buscar.execute();
+            ResultSet rs=(ResultSet)buscar.getObject(2);
                 String[] datos= new String[4];
-                result.next();
-                datos[0] = result.getString(1);
-                datos[1] = result.getString(2);
+                rs.next();
+                datos[0] = rs.getString(1);
+                datos[1] = rs.getString(2);
                 datos[2]=String.valueOf(cantidad[Intem]);
-                datos[3]=String.valueOf(Integer.parseInt(result.getString(3))*cantidad[Intem]);
+                datos[3]=String.valueOf(Integer.parseInt(rs.getString(3))*cantidad[Intem]);
                 //Creo objeto de clase Cliente con los datos obtenido
                 modelo.addRow(datos); //Inserto fila al modelo
                 Intem++;

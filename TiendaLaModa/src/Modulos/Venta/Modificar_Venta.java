@@ -13,8 +13,10 @@ import Clases.Venta;
 import java.util.Arrays;
 import java.util.List;
 import static java.lang.System.exit;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Types;
 
 public class Modificar_Venta extends javax.swing.JFrame {
 
@@ -100,11 +102,13 @@ public class Modificar_Venta extends javax.swing.JFrame {
         Inventario=new int[Productos.length];
         for (String item:Productos) {
             try{
-                Statement state=General.database.createStatement();
-            
-                ResultSet result=state.executeQuery("SELECT cantidad FROM productos WHERE(codigo='"+item+"')");
-                result.next();
-                int cant=Integer.parseInt(result.getString(1));
+                CallableStatement buscar = General.database.prepareCall("{call OBTENER_CANTIDADES_PRODUCTOS(?,?)}");
+                buscar.setInt(1, Integer.parseInt(item));
+                buscar.registerOutParameter(2, Types.REF_CURSOR);
+                buscar.execute();
+                ResultSet rs=(ResultSet)buscar.getObject(2);
+                rs.next();
+                int cant=rs.getInt(1);
                 Inventario[i]=cant;
                 if(cant+Cantidades_Originales[i]>=Cantidades[i]){
                     val=true;
@@ -463,8 +467,9 @@ public class Modificar_Venta extends javax.swing.JFrame {
            }
       venta.add(cantidades);
         try{
+            CallableStatement modificar= General.database.prepareCall("{call ACTUALIZAR_VENTA(" + Integer.parseInt(sell.getID()) + "," + Integer.parseInt(venta.get(0)) + ",'" + venta.get(1) + "','" + venta.get(2) + "'," + Integer.parseInt(venta.get(3)) + "," + Integer.parseInt(venta.get(3)) + ",'" +venta.get(6)+ "')}");
             //Se prepara sentencia SQL
-           PreparedStatement modificar = General.database.prepareStatement("UPDATE ventas SET monto='" + venta.get(0)+"', productos='"+ venta.get(1)+"', pago='"+ venta.get(2)+"', comprador='"+ venta.get(3)+"', vendedor='"+venta.get(4)+"',fecha='"+venta.get(5)+"',cantidades='"+venta.get(6)+"' WHERE ID='"+ sell.getID()+"'");
+           
            //Se ejecuta el SQL
            modificar.executeUpdate();
            modificar.close();
@@ -477,7 +482,7 @@ public class Modificar_Venta extends javax.swing.JFrame {
            
        }
        catch(Exception EX){
-           System.out.println("ERROR AL MODIFICAR"+EX);
+           System.out.println("ERROR AL MODIFICAR "+EX);
        }
         }
        
