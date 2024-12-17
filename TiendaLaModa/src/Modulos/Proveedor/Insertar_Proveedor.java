@@ -311,7 +311,7 @@ public class Insertar_Proveedor extends javax.swing.JFrame {
                 try{
                     //Insertar sera la variable de tipo Prepared Statemnte obtenida de la conexin de base de datos con la consulta INSERT INTO
                    
-                   CallableStatement insertar= General.database.prepareCall("{call INSERTAR_PROVEEDOR(" + Integer.parseInt(TXT_CED.getText()) + ",'" + TXT_NOMBRE.getText() + "','" + COMBO_TIPO.getSelectedItem().toString() +"','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "','" + TXT_PRODUCTOS.getText()+ "')}");
+                   CallableStatement insertar= General.database.prepareCall("{call INSERTAR_PROVEEDOR(" + Integer.parseInt(TXT_CED.getText()) + ",'" + TXT_NOMBRE.getText() + "','" + COMBO_TIPO.getSelectedItem().toString() +"','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "','" + TXT_PRODUCTOS.getText().toString()+ "')}");
                    
                     
                    //Variable para saber si la ejecución se realiza correctamente

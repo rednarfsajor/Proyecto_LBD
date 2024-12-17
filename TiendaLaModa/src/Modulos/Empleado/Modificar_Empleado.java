@@ -342,7 +342,7 @@ public class Modificar_Empleado extends javax.swing.JFrame {
           try{
               //Se prepara sentencia SQL
              //PreparedStatement modificar = General.database.prepareStatement("UPDATE empleados SET nombre='" + empleado.get(0)+"', telefono='"+ empleado.get(1)+"', direccion='"+ empleado.get(2)+"', correo='"+ empleado.get(3)+"', puesto='"+empleado.get(4)+"',salario='"+empleado.get(5)+"' WHERE cedula='"+ employee.getCedula()+"'");
-            CallableStatement modificar= General.database.prepareCall("{call ACTUALIZAR_EMPLEADO(" + Integer.parseInt(employee.getCedula()) + ",'" + TXT_NOMBRE.getText() + "','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "','" + TXT_PUESTO.getText() +"'," + Integer.parseInt(TXT_SALARIO.getText()) + ")}");
+            CallableStatement modificar= General.database.prepareCall("{call ACTUALIZAR_EMPLEADO(" + Integer.parseInt(employee.getCedula()) + ",'" + TXT_NOMBRE.getText() + "','" + TXT_TIPO.getText() + "','" + TXT_TELEFONO.getText() + "','" + TXT_DIRECCION.getText() + "','" + TXT_CORREO.getText() + "','" + TXT_PUESTO.getText() +"'," + Integer.parseInt(TXT_SALARIO.getText()) + ")}");
                     
             //Se ejecuta el SQL
             int A=modificar.executeUpdate(); //ExecuteUpdate() realiza la sentencia INSERT INTO + datos de TXT en la base de datos y la actualiza y retorna un valor de acuerdo al exito 
@@ -355,9 +355,7 @@ public class Modificar_Empleado extends javax.swing.JFrame {
                        JOptionPane.showMessageDialog(null, "Se presentaron fallos al modificar empleado");
                    }
              
-            Empleados ventana = new Empleados();
-             ventana.setVisible(true);
-             this.setVisible(false);
+            
 
 
          }

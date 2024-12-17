@@ -340,9 +340,7 @@ public class Modificar_Proveedor extends javax.swing.JFrame {
                        JOptionPane.showMessageDialog(null, "Se presentaron fallos al modificar empleado");
                    }
           //Se devuelve a la ventana de busqueda
-           Proveedores ventana = new Proveedores();
-           ventana.setVisible(true);
-           this.setVisible(false);
+           
            
            
        }

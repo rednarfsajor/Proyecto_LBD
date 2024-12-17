@@ -319,9 +319,7 @@ public class Modificar_Cliente extends javax.swing.JFrame {
                        JOptionPane.showMessageDialog(null, "Se presentaron fallos al modificar cliente");
                    } 
              
-            Clientes ventana = new Clientes();
-             ventana.setVisible(true);
-             this.setVisible(false);
+           
 
          }
          catch(Exception EX){

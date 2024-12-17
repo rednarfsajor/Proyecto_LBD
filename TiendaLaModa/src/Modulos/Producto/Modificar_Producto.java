@@ -298,9 +298,7 @@ public class Modificar_Producto extends javax.swing.JFrame {
                        JOptionPane.showMessageDialog(null, "Se presentaron fallos al modificar empleado");
                    }
             //Se devuelve a la ventana de busqueda
-            Productos ventana = new Productos();
-            ventana.setVisible(true);
-            this.setVisible(false);
+            
             
 
         } catch (Exception EX) {
