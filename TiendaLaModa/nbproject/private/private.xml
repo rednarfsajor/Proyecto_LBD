@@ -4,13 +4,18 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Empleado/Insertar_Empleado.java</file>
-            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Proveedor/Proveedores.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Venta/Carrito.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Cliente/Insertar_Cliente.java</file>
             <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Producto/Modificar_Producto.java</file>
-            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Empleado/Modificar_Empleado.java</file>
-            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Empleado/Empleados.java</file>
-            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Proveedor/Insertar_Proveedor.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Venta/Insertar_Venta.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Cliente/Clientes.java</file>
             <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Producto/Productos.java</file>
             <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Proveedor/Modificar_Proveedor.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Venta/Lista_Productos.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Empleado/Modificar_Empleado.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Proveedor/Insertar_Proveedor.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Venta/Modificar_Venta.java</file>
+            <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Venta/Ventas.java</file>
             <file>file:/C:/Users/Rednarf/Documents/GitHub/Proyecto_LBD/TiendaLaModa/src/Modulos/Producto/Insertar_Producto.java</file>
         </group>
     </open-files>
